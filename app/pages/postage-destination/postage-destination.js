@@ -14,10 +14,12 @@ import {PostalRateServices} from '../../providers/postal-rate-services/postal-ra
 export class PostageDestinationPage {
     constructor(nav: NavController, dataServices: PostalRateServices) {
         this.nav = nav;
-        this.data = dataServices.data;
+        this.service = dataServices;
+        this.data = this.service.data;
         console.log(this.data);
     }
-    setDestination(dest, name) {
+    setDestination(dest) {
+        this.service.setDest(dest);
         this.nav.push(ItemTypesPage, {dest: dest, name: name});
     }
 }

@@ -18,7 +18,6 @@ describe('Service data initialization test', () => {
 
 describe('Destination Test', () => {
     service.setDest(data.canada);
-
     let dest = service.dest;
 
     it('Selected Destination is Canada', () => expect(dest.name).toEqual('Canada'));

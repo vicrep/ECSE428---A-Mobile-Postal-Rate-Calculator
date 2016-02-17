@@ -1,4 +1,6 @@
-import {Page, NavController, NavParams} from 'ionic/ionic';
+import {Page, NavController} from 'ionic/ionic';
+import {PostalRateServices} from '../../providers/postal-rate-services/postal-rate-services'
+
 
 /*
  Generated class for the ItemTypesPage page.
@@ -10,9 +12,8 @@ import {Page, NavController, NavParams} from 'ionic/ionic';
     templateUrl: 'build/pages/item-types/item-types.html',
 })
 export class ItemTypesPage {
-    constructor(nav:NavController, params:NavParams) {
+    constructor(nav:NavController, dataServices: PostalRateServices) {
         this.nav = nav;
-        this.data = params.get('dest');
-        this.name = params.get('name');
+        this.data = dataServices.dest;
     }
 }
