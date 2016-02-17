@@ -3,7 +3,7 @@
 Description coming soon...
 
 ## Setup
-1. Install the Ionic Beta CLI: `npm install -g ionic@beta`
+1. Install the Ionic Beta CLI: `npm install -g ionic@beta cordova`
 2. Pull this repository
 3. From the repository's local directory, run `npm install`
 4. To test out the app, run `ionic serve --lab`
