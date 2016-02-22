@@ -16,7 +16,12 @@ export class ItemTypesPage {
         this.nav = nav;
         this.service = dataServices;
         this.data = dataServices.dest;
-        this.dimensions = {};
+        this.dimensions = {
+            length: 0,
+            thickness: 0,
+            width: 0,
+            weight: 0,
+        };
         this.price = 0;
         this.isStandard = true;
         this.error = '';
