@@ -20,6 +20,6 @@ export class PostageDestinationPage {
     }
     setDestination(dest) {
         this.service.setDest(dest);
-        this.nav.push(ItemTypesPage, {dest: dest, name: name});
+        this.nav.push(ItemTypesPage, {dest: dest});
     }
 }

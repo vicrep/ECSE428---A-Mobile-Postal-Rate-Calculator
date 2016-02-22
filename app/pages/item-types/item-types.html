@@ -9,5 +9,32 @@
 </ion-navbar>
 
 <ion-content padding class="item-types">
-  
+    <ion-card>
+        <ion-card-header text-center>
+            Please enter information about your package (heh)
+        </ion-card-header>
+        <ion-list>
+            <form #dimForm="ngForm" novalidate>
+            <ion-item>
+                <ion-label floating>Length (mm)</ion-label>
+                <ion-input [(ngModel)]="dimensions.length" ngControl="length" #length="ngForm" type="text" required></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label floating>Width (mm)</ion-label>
+                <ion-input [(ngModel)]="dimensions.width" ngControl="width" #width="ngForm" type="text" required></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label floating>Thickness (mm)</ion-label>
+                <ion-input [(ngModel)]="dimensions.thickness" ngControl="thickness" #thickness="ngForm" type="text" required></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label floating>Weight (g)</ion-label>
+                <ion-input [(ngModel)]="dimensions.weight" ngControl="weight" #weight="ngForm" type="text" required></ion-input>
+            </ion-item>
+            </form>
+        </ion-list>
+    </ion-card>
+    <div padding>
+        <button block secondary (click)="calculatePrice(dimForm)">Continue</button>
+    </div>
 </ion-content>
