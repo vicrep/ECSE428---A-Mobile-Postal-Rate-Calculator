@@ -35,24 +35,15 @@ export class PostalRateServices {
     setDest(dest) {
         this.dest = dest;
     };
-    //
-    //L < 140 Error
-    //W < 90 Error
-    //T < 0.18 Error
-    //We < 2 Error
-    //L > 380 Error
-    //W > 270 Error
-    //T > 20 Error
-    //We > 500 Error
 
     getError(dim) {
         if (dim.length < 140) return 'Length must be larger than 140 mm.';
-        if (dim.width < 90) return 'Width must be larger than 90 mm.';
         if (dim.thickness < 0.18) return 'Thickness must be larger than 0.18 mm.';
         if (dim.weight < 2) return 'Weight must be larger than 2 g.';
+        if (dim.width < 90) return 'Width must be larger than 90 mm.';
         if (dim.length > 380) return 'Length must be smaller than 380 mm.';
         if (dim.width > 270) return 'Width must be smaller than 270 mm.';
-        if (dim.thickness > 20) return 'Length must be smaller than 20 mm.';
+        if (dim.thickness > 20) return 'Thickness must be smaller than 20 mm.';
         if (dim.weight > 500) return 'Weight must be smaller than 500 g.';
         else return '';
     }
@@ -84,7 +75,7 @@ export class PostalRateServices {
                 else if (100 < dim.weight && dim.weight < 200) return 5.15;
                 else return 10.3;
             }
-        } else if (data.name === 'USA') {
+        } else if (data.name === 'International') {
             if (isStandard) {
                 if (dim.weight < 30) return 2.5;
                 else return 3.6;

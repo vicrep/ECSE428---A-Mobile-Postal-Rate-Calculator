@@ -21,7 +21,7 @@ export class ItemTypesPage {
             thickness: 0,
             width: 0,
             weight: 0,
-        }
+        };
         this.price = 0;
         this.isStandard = true;
         this.error = '';
