@@ -61740,11 +61740,13 @@
 	var PostageDestinationPage = (function () {
 	    function PostageDestinationPage(nav, dataServices) {
 	        this.nav = nav;
-	        this.data = dataServices.getDest();
+	        this.service = dataServices;
+	        this.data = this.service.data;
 	        console.log(this.data);
 	    }
-	    PostageDestinationPage.prototype.setDestination = function (dest, name) {
-	        this.nav.push(item_types_1.ItemTypesPage, { dest: dest, name: name });
+	    PostageDestinationPage.prototype.setDestination = function (dest) {
+	        this.service.setDest(dest);
+	        this.nav.push(item_types_1.ItemTypesPage, { dest: dest });
 	    };
 	    PostageDestinationPage = __decorate([
 	        ionic_1.Page({
@@ -61772,6 +61774,7 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var ionic_1 = __webpack_require__(5);
+	var postal_rate_services_1 = __webpack_require__(356);
 	/*
 	 Generated class for the ItemTypesPage page.
 
@@ -61779,16 +61782,49 @@
 	 Ionic pages and navigation.
 	 */
 	var ItemTypesPage = (function () {
-	    function ItemTypesPage(nav, params) {
+	    function ItemTypesPage(nav, dataServices) {
 	        this.nav = nav;
-	        this.data = params.get('dest');
-	        this.name = params.get('name');
+	        this.service = dataServices;
+	        this.data = dataServices.dest;
+	        this.dimensions = {};
+	        this.price = 0;
+	        this.isStandard = true;
+	        this.error = '';
 	    }
+	    ItemTypesPage.prototype.calculatePrice = function (form) {
+	        if (form.valid) {
+	            this.error = this.service.getError(this.dimensions);
+	            if (this.error === '') {
+	                this.isStandard = this.service.getStandard(this.dimensions);
+	                this.price = this.service.getPrice(this.dimensions, this.data, this.isStandard);
+	                var alert = ionic_1.Alert.create({
+	                    title: 'PRICE',
+	                    subTitle: 'The price to ship your package is $' + this.price.toFixed(2) + '.',
+	                    buttons: ['Ok']
+	                });
+	                this.nav.present(alert);
+	            }
+	            else {
+	                var alert = ionic_1.Alert.create({
+	                    subTitle: this.error,
+	                    buttons: ['Ok']
+	                });
+	                this.nav.present(alert);
+	            }
+	        }
+	        else {
+	            var alert = ionic_1.Alert.create({
+	                subTitle: 'Please fill in all fields!',
+	                buttons: ['Ok']
+	            });
+	            this.nav.present(alert);
+	        }
+	    };
 	    ItemTypesPage = __decorate([
 	        ionic_1.Page({
 	            templateUrl: 'build/pages/item-types/item-types.html',
 	        }), 
-	        __metadata('design:paramtypes', [(typeof (_a = typeof ionic_1.NavController !== 'undefined' && ionic_1.NavController) === 'function' && _a) || Object, (typeof (_b = typeof ionic_1.NavParams !== 'undefined' && ionic_1.NavParams) === 'function' && _b) || Object])
+	        __metadata('design:paramtypes', [(typeof (_a = typeof ionic_1.NavController !== 'undefined' && ionic_1.NavController) === 'function' && _a) || Object, (typeof (_b = typeof postal_rate_services_1.PostalRateServices !== 'undefined' && postal_rate_services_1.PostalRateServices) === 'function' && _b) || Object])
 	    ], ItemTypesPage);
 	    return ItemTypesPage;
 	    var _a, _b;
@@ -61820,37 +61856,120 @@
 	    function PostalRateServices() {
 	        this.data = {
 	            canada: {
+	                name: 'Canada',
 	                standard: {},
 	                other: {}
 	            },
 	            usa: {
+	                name: 'USA',
 	                standard: {},
 	                other: {}
 	            },
 	            international: {
+	                name: 'International',
 	                standard: {},
 	                other: {}
 	            }
 	        };
-	        this.dest = {};
-	        this.type = {};
-	        this.item = {};
+	        this.dest = null;
+	        this.type = null;
+	        this.item = null;
 	    }
-	    PostalRateServices.prototype.getDest = function () {
-	        return this.data;
-	    };
-	    PostalRateServices.prototype.getPrice = function (item, weight) {
-	        return new Promise(function (resolve, reject) {
-	            if (weight < 0)
-	                reject('Invalid Weight');
-	            for (var i = 0; i < item.length; i++) {
-	                if (weight > item[i].minWeight && weight <= item[i].maxWeight)
-	                    resolve(item[i].price);
-	            }
-	            reject('Weight exceeds max allowed weight in this category');
-	        });
+	    PostalRateServices.prototype.setDest = function (dest) {
+	        this.dest = dest;
 	    };
 	    ;
+	    //
+	    //L < 140 Error
+	    //W < 90 Error
+	    //T < 0.18 Error
+	    //We < 2 Error
+	    //L > 380 Error
+	    //W > 270 Error
+	    //T > 20 Error
+	    //We > 500 Error
+	    PostalRateServices.prototype.getError = function (dim) {
+	        if (dim.length < 140)
+	            return 'Length must be larger than 140 mm.';
+	        if (dim.width < 90)
+	            return 'Width must be larger than 90 mm.';
+	        if (dim.thickness < 0.18)
+	            return 'Thickness must be larger than 0.18 mm.';
+	        if (dim.weight < 2)
+	            return 'Weight must be larger than 2 g.';
+	        if (dim.length > 380)
+	            return 'Length must be smaller than 380 mm.';
+	        if (dim.width > 270)
+	            return 'Width must be smaller than 270 mm.';
+	        if (dim.thickness > 20)
+	            return 'Length must be smaller than 20 mm.';
+	        if (dim.weight > 500)
+	            return 'Weight must be smaller than 500 g.';
+	        else
+	            return '';
+	    };
+	    PostalRateServices.prototype.getStandard = function (dim) {
+	        if (140 < dim.length && dim.length < 245 && 90 < dim.width && dim.width < 156
+	            && 0.18 < dim.thickness && dim.thickness < 5 && 2 < dim.weight && dim.weight < 50)
+	            return true;
+	        else
+	            return false;
+	    };
+	    PostalRateServices.prototype.getPrice = function (dim, data, isStandard) {
+	        if (data.name === 'Canada') {
+	            if (isStandard) {
+	                if (dim.weight < 30)
+	                    return 0.85;
+	                else
+	                    return 1.2;
+	            }
+	            else {
+	                if (dim.weight < 100)
+	                    return 1.8;
+	                else if (100 < dim.weight && dim.weight < 200)
+	                    return 2.95;
+	                else if (200 < dim.weight && dim.weight < 300)
+	                    return 4.1;
+	                else if (300 < dim.weight && dim.weight < 400)
+	                    return 4.7;
+	                else
+	                    return 5.05;
+	            }
+	        }
+	        else if (data.name === 'USA') {
+	            if (isStandard) {
+	                if (dim.weight < 30)
+	                    return 1.2;
+	                else
+	                    return 1.8;
+	            }
+	            else {
+	                if (dim.weight < 100)
+	                    return 2.95;
+	                else if (100 < dim.weight && dim.weight < 200)
+	                    return 5.15;
+	                else
+	                    return 10.3;
+	            }
+	        }
+	        else if (data.name === 'USA') {
+	            if (isStandard) {
+	                if (dim.weight < 30)
+	                    return 2.5;
+	                else
+	                    return 3.6;
+	            }
+	            else {
+	                if (dim.weight < 100)
+	                    return 5.9;
+	                else if (100 < dim.weight && dim.weight < 200)
+	                    return 10.3;
+	                else
+	                    return 20.6;
+	            }
+	        }
+	        return 0;
+	    };
 	    PostalRateServices = __decorate([
 	        core_1.Injectable(), 
 	        __metadata('design:paramtypes', [])
